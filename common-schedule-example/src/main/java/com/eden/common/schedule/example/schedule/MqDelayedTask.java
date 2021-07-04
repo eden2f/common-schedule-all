@@ -25,13 +25,15 @@ public class MqDelayedTask implements DelayedTask {
     private final Integer delayedTime;
     private final String taskId;
     private final String retryContext;
+    private final Integer maxExecutionTime;
     public static final String RETRY_CONTEXT_PREFIX = "MQ_";
     public static final String RETRY_CONTEXT_FORMAT = "MQ_%s";
     public static final String ID_FORMAT = "MQ_%s_%s";
 
-    public MqDelayedTask(Long businessId, Integer delayedTime) {
+    public MqDelayedTask(Long businessId, Integer delayedTime, Integer maxExecutionTime) {
         this.businessId = businessId;
         this.delayedTime = delayedTime;
+        this.maxExecutionTime = maxExecutionTime;
         taskId = MqDelayedTask.getTaskIdByBusinessId(businessId);
         retryContext = MqDelayedTask.getRetryContextByBusinessId(businessId);
     }
@@ -54,6 +56,11 @@ public class MqDelayedTask implements DelayedTask {
     @Override
     public String getRetryContext() {
         return this.retryContext;
+    }
+
+    @Override
+    public Long getMaxExecutionSecond() {
+        return this.maxExecutionTime.longValue();
     }
 
 

@@ -5,9 +5,7 @@ import com.eden.common.schedule.persistent.DelayedTaskDao;
 import com.eden.common.schedule.persistent.DelayedTaskPo;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -48,9 +46,14 @@ public class TaskPersistentScheduler implements DelayedScheduler {
     public void init() {
         log.info("TaskPersistentScheduler.init start, retryEnable = {}", retryEnable);
         if (retryEnable) {
-            List<DelayedTaskPo> tasks = this.delayedTaskDao.selectByStatus(TaskStatus.NEW);
+            List<TaskStatus> taskStatusIn = new ArrayList<>();
+            taskStatusIn.add(TaskStatus.NEW);
+            taskStatusIn.add(TaskStatus.RUNNING);
+            List<DelayedTaskPo> tasks = this.delayedTaskDao.selectByStatusIn(taskStatusIn);
             for (DelayedTaskPo task : tasks) {
-                if (task.getExecuteTime().before(new Date())) {
+                boolean newTaskTimeout = task.getStatus().equals(TaskStatus.NEW) && task.getExecuteTime().before(new Date());
+                boolean runningTaskTimeout = task.getStatus().equals(TaskStatus.RUNNING) && new Date(task.getExecuteTime().getTime() + task.getMaxExecutionSecond() * 1000).before(new Date());
+                if (newTaskTimeout || runningTaskTimeout) {
                     delayedTaskRetryListener.onRetry(task.getTaskId(), task.getRetryContext());
                     task.setStatus(TaskStatus.FINISHED);
                     delayedTaskDao.saveOrUpdate(task);
@@ -74,6 +77,11 @@ public class TaskPersistentScheduler implements DelayedScheduler {
                         @Override
                         public String getRetryContext() {
                             return task.getRetryContext();
+                        }
+
+                        @Override
+                        public Long getMaxExecutionSecond() {
+                            return task.getMaxExecutionSecond();
                         }
 
                         @Override

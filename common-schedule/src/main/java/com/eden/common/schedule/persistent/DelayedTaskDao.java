@@ -35,4 +35,12 @@ public interface DelayedTaskDao {
      */
     List<DelayedTaskPo> selectByStatus(TaskStatus taskStatus);
 
+    /**
+     * 根据任务状态批量查询
+     *
+     * @param taskStatusIn 任务状态
+     * @return 延时任务对象列表
+     */
+    List<DelayedTaskPo> selectByStatusIn(List<TaskStatus> taskStatusIn);
+
 }

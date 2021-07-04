@@ -27,4 +27,6 @@ public class DelayedTaskPo {
     private Date executeTime;
 
     private String retryContext;
+
+    private Long maxExecutionSecond;
 }

@@ -58,6 +58,12 @@ public class DelayedTaskDaoImpl implements DelayedTaskDao {
                 .stream().map(this::getDelayedTaskPoByMqDelayedTaskPo).collect(Collectors.toList());
     }
 
+    @Override
+    public List<DelayedTaskPo> selectByStatusIn(List<TaskStatus> taskStatusIn) {
+        return mqDelayedTaskRepository.findByStatusIn(taskStatusIn.stream().map(TaskStatus::getStatus).collect(Collectors.toList()))
+                .stream().map(this::getDelayedTaskPoByMqDelayedTaskPo).collect(Collectors.toList());
+    }
+
     public List<DelayedTaskPo> findByRetryContext(String retryContext, int status) {
         return mqDelayedTaskRepository.findByRetryContextAndStatus(retryContext, status)
                 .stream().map(this::getDelayedTaskPoByMqDelayedTaskPo).collect(Collectors.toList());

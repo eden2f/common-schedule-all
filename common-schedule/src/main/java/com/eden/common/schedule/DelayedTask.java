@@ -34,4 +34,11 @@ public interface DelayedTask extends Runnable {
      */
     String getRetryContext();
 
+    /**
+     * 最大执行时间，超过该时候视为执行失败
+     *
+     * @return 最大执行时间(单位：秒)
+     */
+    Long getMaxExecutionSecond();
+
 }

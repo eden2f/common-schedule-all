@@ -31,7 +31,7 @@ public class DelayTaskController {
     @PostMapping("submit")
     @ApiOperation("提交一个延时任务")
     public RetResult<Void> submit(@RequestBody @Valid DelayTaskAddReq req) {
-        MqDelayedTask mqDelayedTask = new MqDelayedTask(req.getBusinessId(), req.getDelayedTime());
+        MqDelayedTask mqDelayedTask = new MqDelayedTask(req.getBusinessId(), req.getDelayedTime(), 10);
         delayedScheduler.submit(mqDelayedTask);
         return RetResult.success();
     }

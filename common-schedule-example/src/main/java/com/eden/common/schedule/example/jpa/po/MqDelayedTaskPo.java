@@ -38,4 +38,7 @@ public class MqDelayedTaskPo {
     @Column(length = 256, nullable = false)
     private String retryContext;
 
+    @Column(nullable = false)
+    private Long maxExecutionSecond;
+
 }
